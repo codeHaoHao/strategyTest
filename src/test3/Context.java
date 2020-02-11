@@ -1,29 +1,32 @@
 package test3;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+
+import utils.ClassUtils;
 
 public class Context {
-	
-	private static Map<String, Strategy> map = new ConcurrentHashMap<String, Strategy>();
-	
-	public static String algorithm(Class<? extends Strategy> c, String content) {
-		Strategy strategy = null;
+	// 存储类实例，key为类名，value为实例
+	private static Map<String, Strategy> map;
+	static {
+		List<Object> strategys = null;
 		try {
-			if (map.get(c.getName()) != null) {
-				System.out.println("from map");
-				strategy = map.get(c.getName());
-			} else {
-				System.out.println("from class.newInstance");
-				strategy = c.newInstance();
-				map.put(c.getName(), strategy);
-			}
-			
+			strategys = ClassUtils.getAllObjectByInterface(Strategy.class);
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		return strategy.algorithm(content);
+		map = new HashMap<String, Strategy>();
+		for (int i = 0; i < strategys.size(); i++) {
+			Strategy strategy = (Strategy) strategys.get(i);
+			String name = strategy.getClass().getSimpleName(); // 获取类名
+			map.put(name, strategy);
+		}
+	}
+	
+	public static String algorithm(String className, String content) {
+		return map.get(className).algorithm(content);
 	}
 }
