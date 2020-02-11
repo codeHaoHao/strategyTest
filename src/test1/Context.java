@@ -12,13 +12,12 @@ public class Context {
 		}
 		return strategy.algorithm(content);
 	}
-	
+
 	public static String algorithm2(String className, String content) {
 		Strategy strategy = null;
 		try {
 			strategy = (Strategy) Class.forName(className).newInstance();
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return strategy.algorithm(content);
